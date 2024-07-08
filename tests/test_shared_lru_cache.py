@@ -166,7 +166,7 @@ def test_shared_lru_cache_vs_functools_lru_cache():
 # Simulate loading an image from disk
 def load_image(filename):
     time.sleep(0.2)  # Simulate I/O delay
-    return np.random.rand(2, 2)  # Return a random 1000x1000 array
+    return np.random.rand(1024, 1024)
 
 
 shared_load = shared_lru_cache(maxsize=100)(load_image)
