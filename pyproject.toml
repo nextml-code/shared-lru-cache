@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shared-lru-cache"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Richard Löwenström <samedii@gmail.com>"]
 readme = "README.md"

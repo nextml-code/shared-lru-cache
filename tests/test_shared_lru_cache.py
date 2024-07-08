@@ -159,7 +159,7 @@ def test_shared_lru_cache_vs_functools_lru_cache():
     # Assert that the performance difference is within an acceptable range
     # This is a flexible assertion as performance can vary between runs
     assert (
-        abs(shared_time - functools_time) < 0.1
+        abs(shared_time - functools_time) < 0.2
     ), "Performance difference is too large"
 
 

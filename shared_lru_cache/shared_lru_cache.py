@@ -21,30 +21,29 @@ class SharedLRUCache:
             with self.read_lock:
                 if key in self.cache:
                     with self.write_lock:
-                        self.order.remove(key)
+                        if (
+                            key in self.order
+                        ):  # Check if key is in order before removing
+                            self.order.remove(key)
                         self.order.append(key)
                     return pickle.loads(self.data_store[key])
 
             result = func(*args, **kwargs)
-
-            # Serialize the result
             serialized_result = pickle.dumps(result)
 
             with self.write_lock:
                 # Check again in case another process has updated the cache
                 if key in self.cache:
-                    self.order.remove(key)
-                    self.order.append(key)
-                    return pickle.loads(self.data_store[key])
+                    return result
 
                 self.cache[key] = key
                 self.data_store[key] = serialized_result
                 self.order.append(key)
 
-                if len(self.order) > self.maxsize:
+                while len(self.order) > self.maxsize:
                     oldest = self.order.pop(0)
-                    del self.cache[oldest]
-                    del self.data_store[oldest]
+                    self.cache.pop(oldest, None)
+                    self.data_store.pop(oldest, None)
 
             return result
 

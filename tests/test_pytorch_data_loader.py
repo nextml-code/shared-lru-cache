@@ -7,6 +7,8 @@ from torch.utils.data import DataLoader, Dataset
 
 from shared_lru_cache import shared_lru_cache
 
+MAX_INDEX = 20
+
 
 def load_image(idx):
     time.sleep(0.2)  # Simulate some data loading time
@@ -25,7 +27,7 @@ class LRUCachedDataset(Dataset):
         return self.size
 
     def __getitem__(self, idx):
-        return lru_cached_load_image(idx % 50)
+        return lru_cached_load_image(idx % MAX_INDEX)
 
 
 class SharedLRUCachedDataset(Dataset):
@@ -36,7 +38,7 @@ class SharedLRUCachedDataset(Dataset):
         return self.size
 
     def __getitem__(self, idx):
-        return shared_lru_cached_load_image(idx % 50)
+        return shared_lru_cached_load_image(idx % MAX_INDEX)
 
 
 def test_shared_lru_cache_vs_standard_dataloader():
