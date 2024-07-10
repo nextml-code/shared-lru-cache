@@ -7,12 +7,12 @@ from torch.utils.data import DataLoader, Dataset
 
 from shared_lru_cache import shared_lru_cache
 
-MAX_INDEX = 20
+MAX_INDEX = 10
 
 
 def load_image(idx):
-    time.sleep(0.2)  # Simulate some data loading time
-    return torch.randn(1024, 1024)
+    time.sleep(5)  # Simulate some data loading time
+    return torch.zeros((30000, 2500), dtype=torch.uint8)
 
 
 lru_cached_load_image = lru_cache(maxsize=128)(load_image)
