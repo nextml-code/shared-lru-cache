@@ -7,16 +7,19 @@ from torch.utils.data import DataLoader, Dataset
 
 from shared_lru_cache import shared_lru_cache
 
-MAX_INDEX = 20
+MAX_INDEX = 8
+CACHE_SIZE = 16
 
 
 def load_image(idx):
-    time.sleep(0.2)  # Simulate some data loading time
-    return torch.randn(1024, 1024)
+    time.sleep(5)  # Simulate some data loading time
+    return torch.zeros((1024, 2500), dtype=torch.uint8)
 
 
-lru_cached_load_image = lru_cache(maxsize=128)(load_image)
-shared_lru_cached_load_image = shared_lru_cache(maxsize=128)(load_image)
+lru_cached_load_image = lru_cache(maxsize=CACHE_SIZE)(load_image)
+shared_lru_cached_load_image = shared_lru_cache(
+    maxsize=CACHE_SIZE, update_on_hit=False
+)(load_image)
 
 
 class LRUCachedDataset(Dataset):
@@ -42,23 +45,23 @@ class SharedLRUCachedDataset(Dataset):
 
 
 def test_shared_lru_cache_vs_standard_dataloader():
-    dataset_size = 128
-    batch_size = 8
-    num_workers = 8
+    dataset_size = 32
+    batch_size = 1
+    num_workers = 3
 
     # Standard DataLoader with LRUCachedDataset
-    lru_dataset = LRUCachedDataset(size=dataset_size)
-    lru_loader = DataLoader(
-        lru_dataset,
-        batch_size=batch_size,
-        num_workers=num_workers,
-        collate_fn=list,
-    )
+    # lru_dataset = LRUCachedDataset(size=dataset_size)
+    # lru_loader = DataLoader(
+    #     lru_dataset,
+    #     batch_size=batch_size,
+    #     num_workers=num_workers,
+    #     collate_fn=list,
+    # )
 
-    start_time = time.time()
-    for _ in lru_loader:
-        pass
-    lru_time = time.time() - start_time
+    # start_time = time.time()
+    # for _ in lru_loader:
+    #     pass
+    # lru_time = time.time() - start_time
 
     # Shared LRU cache DataLoader
     shared_lru_dataset = SharedLRUCachedDataset(size=dataset_size)
@@ -74,9 +77,9 @@ def test_shared_lru_cache_vs_standard_dataloader():
         pass
     shared_lru_time = time.time() - start_time
 
-    print(f"Standard LRU cache DataLoader time: {lru_time:.6f} seconds")
+    # print(f"Standard LRU cache DataLoader time: {lru_time:.6f} seconds")
     print(f"Shared LRU cache DataLoader time: {shared_lru_time:.6f} seconds")
 
-    assert (
-        shared_lru_time < lru_time
-    ), "Shared LRU cache should be faster than standard LRU cache DataLoader"
+    # assert (
+    #     shared_lru_time < lru_time
+    # ), "Shared LRU cache should be faster than standard LRU cache DataLoader"

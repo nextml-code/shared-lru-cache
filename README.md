@@ -1,5 +1,7 @@
 # shared lru cache
 
+`functools.lru_cache` replacement
+
 ## Install
 
 ```bash
